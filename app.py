@@ -81,5 +81,5 @@ def predict():
         return render_template('index.html', prediction=speaker_name)
     
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Use the PORT environment variable, default to 5000
-    app.run(host="0.0.0.0", port=port)
+    app.run()  # Runs on localhost at port 5000 by default
+
