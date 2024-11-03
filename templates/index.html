@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speaker Prediction</title>
+    <style>
+        body {
+            background-color: rgb(184, 235, 203);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .custom-file-input {
+            display: none;
+        }
+
+        .custom-file-label {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background-color: #007BFF;
+            border: 2px solid #0056b3;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .custom-file-label:hover {
+            background-color: #0056b3;
+        }
+
+        .file-name {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .loading-message {
+            display: none;
+            font-size: 16px;
+            color: #555;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload an MP3 file to predict the speaker</h1>
+    
+    <form action="/predict" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
+        <label for="file-upload" class="custom-file-label">Choose File</label>
+        <input type="file" id="file-upload" name="file" class="custom-file-input" accept=".mp3" required onchange="showFileName()">
+        <span class="file-name" id="file-name"></span>
+        <button type="submit">Upload and Predict</button>
+        <div class="loading-message" id="loading-message">Processing... Please wait.</div>
+    </form>
+    
+    {% if prediction %}
+        <h2 style="text-align: center;">Predicted Speaker: {{ prediction }}</h2>
+    {% endif %}
+
+    <script>
+        document.querySelector('.custom-file-label').addEventListener('click', function() {
+            document.querySelector('.custom-file-input').click();
+        });
+
+        function showFileName() {
+            const fileInput = document.getElementById('file-upload');
+            const fileNameDisplay = document.getElementById('file-name');
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = `Selected file: ${fileInput.files[0].name}`;
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('loading-message').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
