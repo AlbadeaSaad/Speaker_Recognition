@@ -4,3 +4,4 @@ numpy
 librosa
 joblib
 tensorflow
+gunicorn
