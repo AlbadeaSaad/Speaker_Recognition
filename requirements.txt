@@ -1,6 +1,0 @@
-flask
-pydub
-numpy
-librosa
-joblib
-tensorflow
