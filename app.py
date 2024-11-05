@@ -1,7 +1,7 @@
 import streamlit as st
-from pydub import AudioSegment
 import numpy as np
 import librosa
+import soundfile as sf
 import joblib
 from tensorflow.keras.models import load_model
 import os
@@ -10,10 +10,10 @@ import os
 model = load_model('best_model.keras')
 encoder = joblib.load('label_encoder.pkl')
 
-# Function to convert MP3 to WAV
+# Function to convert MP3 to WAV using librosa and soundfile
 def convert_mp3_to_wav(mp3_file, wav_file):
-    audio = AudioSegment.from_file(mp3_file, format="mp3")
-    audio.export(wav_file, format="wav")
+    audio, sample_rate = librosa.load(mp3_file, sr=None)
+    sf.write(wav_file, audio, sample_rate)
 
 # Function to extract MFCCs from WAV file
 def extract_mfcc(file_path, n_mfcc=40, max_pad_len=174):
