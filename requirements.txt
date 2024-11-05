@@ -1,10 +1,7 @@
 Flask
-gunicorn==23.0.0
+gunicorn==20.1.0
 joblib
-keras==3.6.0
 librosa
 numpy
-pillow
-pydub==0.25.1
-tensorflow==2.17.0
-uvicorn
+pydub
+tensorflow
