@@ -7,7 +7,7 @@ from tensorflow.keras.models import load_model
 import os
 
 # Load the model and encoder
-model = load_model('best_model_new.keras')
+model = load_model('best_model.keras')
 encoder = joblib.load('label_encoder.pkl')
 
 # Function to convert MP3 to WAV
