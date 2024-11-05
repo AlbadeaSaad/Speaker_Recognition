@@ -1,7 +1,0 @@
-Flask
-pydub
-numpy
-librosa
-joblib
-tensorflow
-gunicorn
