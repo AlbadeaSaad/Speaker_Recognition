@@ -1,13 +1,10 @@
-Flask @ file:///C:/b/abs_f9w7doyu0h/croot/flask_1716545924884/work
+Flask
 gunicorn==23.0.0
-joblib @ file:///home/conda/feedstock_root/build_artifacts/joblib_1714665484399/work
+joblib
 keras==3.6.0
-librosa @ file:///home/conda/feedstock_root/build_artifacts/librosa_1715792228054/work
-numba @ file:///D:/bld/numba_1718888193576/work
-numpy @ file:///C:/b/abs_c1ywpu18ar/croot/numpy_and_numpy_base_1708638681471/work/dist/numpy-1.26.4-cp311-cp311-win_amd64.whl#sha256=5dfd3e04dc1c2826d3f404fdc7f93c097901f5da9b91f4f394f79d4e038ed81d
-pillow @ file:///C:/b/abs_32o8er3uqp/croot/pillow_1721059447598/work
+librosa
+numpy
+pillow
 pydub==0.25.1
 tensorflow==2.17.0
-tensorflow-intel==2.17.0
-tensorflow-io-gcs-filesystem==0.31.0
-uvicorn @ file:///C:/ci_311_rebuilds/uvicorn-split_1679017274842/work
+uvicorn
