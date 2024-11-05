@@ -11,6 +11,7 @@ app.config['UPLOAD_FOLDER'] = 'static/uploads/'
 
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
+
 # Load model and encoder
 model = load_model('best_model.keras')
 encoder = joblib.load('label_encoder.pkl')
@@ -81,5 +82,6 @@ def predict():
         return render_template('index.html', prediction=speaker_name)
     
 if __name__ == "__main__":
-    app.run()  # Runs on localhost at port 5000 by default
-
+    # Use the port from the environment variable, default to 5000
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)  # Allows the app to be accessible externally
