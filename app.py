@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+import streamlit as st
 from pydub import AudioSegment
 import numpy as np
 import librosa
@@ -6,27 +6,20 @@ import joblib
 from tensorflow.keras.models import load_model
 import os
 
-app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'static/uploads/'
-
-if not os.path.exists(app.config['UPLOAD_FOLDER']):
-    os.makedirs(app.config['UPLOAD_FOLDER'])
-
-# Load model and encoder
-model = load_model('best_model.keras')
+# Load the model and encoder
+model = load_model('best_model_new.keras')
 encoder = joblib.load('label_encoder.pkl')
 
 # Function to convert MP3 to WAV
 def convert_mp3_to_wav(mp3_file, wav_file):
-    audio = AudioSegment.from_mp3(mp3_file)
+    audio = AudioSegment.from_file(mp3_file, format="mp3")
     audio.export(wav_file, format="wav")
 
 # Function to extract MFCCs from WAV file
 def extract_mfcc(file_path, n_mfcc=40, max_pad_len=174):
-    audio, sample_rate = librosa.load(file_path, sr=None)
-    mfcc = librosa.feature.mfcc(y=audio, sr=sample_rate, n_mfcc=n_mfcc)
+    audio, sample_rate = librosa.load(file_path, sr=16000)
+    mfcc = librosa.feature.mfcc(y=audio, sr=16000, n_mfcc=n_mfcc)
     
-    # Pad or truncate to match max_pad_len
     if mfcc.shape[1] < max_pad_len:
         pad_width = max_pad_len - mfcc.shape[1]
         mfcc = np.pad(mfcc, pad_width=((0, 0), (0, pad_width)), mode='constant')
@@ -37,8 +30,7 @@ def extract_mfcc(file_path, n_mfcc=40, max_pad_len=174):
 
 # Function to predict speaker from MP3 file
 def predict_speaker(mp3_path):
-    # Convert MP3 to WAV
-    wav_file = os.path.join(app.config['UPLOAD_FOLDER'], 'temp_audio.wav')
+    wav_file = 'temp_audio.wav'
     convert_mp3_to_wav(mp3_path, wav_file)
     
     # Extract MFCCs and reshape for model
@@ -51,37 +43,30 @@ def predict_speaker(mp3_path):
     
     # Get speaker name
     speaker_name = encoder.inverse_transform([predicted_label])[0]
+    
+    # Clean up temporary WAV file
+    os.remove(wav_file)
+    
     return speaker_name
 
-# Home route
-@app.route('/')
-def index():
-    return render_template('index.html')
+# Streamlit UI
+st.title("Speaker Recognition App")
+st.write("Upload an MP3 file to identify the speaker.")
 
-# Prediction route
-@app.route('/predict', methods=['POST'])
-def predict():
-    if 'file' not in request.files:
-        return redirect(request.url)
+# File uploader widget
+uploaded_file = st.file_uploader("Choose an MP3 file", type=["mp3", "wav"])
+
+if uploaded_file is not None:
+    # Save the uploaded file temporarily
+    file_path = 'uploaded_audio.mp3'
+    with open(file_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+
+    # Process the file and predict speaker
+    speaker_name = predict_speaker(file_path)
     
-    file = request.files['file']
-    if file.filename == '':
-        return redirect(request.url)
-
-    # Save uploaded file
-    if file:
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-        file.save(file_path)  # Ensure the file is saved before prediction
-
-        # Predict speaker
-        speaker_name = predict_speaker(file_path)
-        
-        # Remove the uploaded file after prediction
-        os.remove(file_path)
-        
-        return render_template('index.html', prediction=speaker_name)
+    # Display result
+    st.success(f"Predicted Speaker: {speaker_name}")
     
-if __name__ == "__main__":
-    # Use the port from the environment variable, default to 5000
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)  # Allows the app to be accessible externally
+    # Clean up the uploaded file
+    os.remove(file_path)
