@@ -3,5 +3,6 @@ gunicorn==20.1.0
 joblib
 librosa
 numpy
-pydub
+streamlit
+soundfile
 tensorflow
